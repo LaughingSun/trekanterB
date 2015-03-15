@@ -1,0 +1,143 @@
+solid pyramid_001
+color 0.000000 0.000000 1.000000
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex 7.071068 7.071068 0.000000
+			vertex 1.564344 9.876883 0.000000
+		end loop
+	endfacet
+facet normal 44.893028 88.107582 58.778522
+		outer loop
+			vertex 7.071068 7.071068 0.000000
+			vertex 1.564344 9.876883 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex 1.564344 9.876883 0.000000
+			vertex -4.539906 8.910065 0.000000
+		end loop
+	endfacet
+facet normal -15.469086 97.667992 58.778519
+		outer loop
+			vertex 1.564344 9.876883 0.000000
+			vertex -4.539906 8.910065 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex -4.539906 8.910065 0.000000
+			vertex -8.910066 4.539904 0.000000
+		end loop
+	endfacet
+facet normal -69.922569 69.922562 58.778526
+		outer loop
+			vertex -4.539906 8.910065 0.000000
+			vertex -8.910066 4.539904 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex -8.910066 4.539904 0.000000
+			vertex -9.876884 -1.564346 0.000000
+		end loop
+	endfacet
+facet normal -97.667999 15.469086 58.778526
+		outer loop
+			vertex -8.910066 4.539904 0.000000
+			vertex -9.876884 -1.564346 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex -9.876884 -1.564346 0.000000
+			vertex -7.071067 -7.071069 0.000000
+		end loop
+	endfacet
+facet normal -88.107567 -44.893059 58.778526
+		outer loop
+			vertex -9.876884 -1.564346 0.000000
+			vertex -7.071067 -7.071069 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex -7.071067 -7.071069 0.000000
+			vertex -1.564342 -9.876884 0.000000
+		end loop
+	endfacet
+facet normal -44.893036 -88.107597 58.778534
+		outer loop
+			vertex -7.071067 -7.071069 0.000000
+			vertex -1.564342 -9.876884 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex -1.564342 -9.876884 0.000000
+			vertex 4.539905 -8.910065 0.000000
+		end loop
+	endfacet
+facet normal 15.469101 -97.667953 58.778503
+		outer loop
+			vertex -1.564342 -9.876884 0.000000
+			vertex 4.539905 -8.910065 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex 4.539905 -8.910065 0.000000
+			vertex 8.910067 -4.539904 0.000000
+		end loop
+	endfacet
+facet normal 69.922577 -69.922592 58.778542
+		outer loop
+			vertex 4.539905 -8.910065 0.000000
+			vertex 8.910067 -4.539904 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex 8.910067 -4.539904 0.000000
+			vertex 9.876884 1.564344 0.000000
+		end loop
+	endfacet
+facet normal 97.667969 -15.469086 58.778515
+		outer loop
+			vertex 8.910067 -4.539904 0.000000
+			vertex 9.876884 1.564344 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+facet normal 0.000000 0.000000 1.000000
+		outer loop
+			vertex 0.000000 0.000000 0.000000
+			vertex 9.876884 1.564344 0.000000
+			vertex 7.071068 7.071068 0.000000
+		end loop
+	endfacet
+facet normal 88.107582 44.893066 58.778538
+		outer loop
+			vertex 9.876884 1.564344 0.000000
+			vertex 7.071068 7.071068 0.000000
+			vertex 0.000000 0.000000 16.000000
+		end loop
+	endfacet
+endsolid pyramid_001
