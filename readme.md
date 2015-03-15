@@ -2,7 +2,7 @@ TrekantER-B
 ===========
 
 trekantER is a Stereo Lithography file reader written in Ruby.
-Treteker Currently is implemented in the old openGL pipeline style ( immediate mode ) and glut.
+Trekanter Currently is implemented in the old openGL pipeline style ( immediate mode ) and glut.
 Plans exist to migrate to modern OpenGL.
 
 The intention is to have a simple visualization tool for small STL files ( < 0.5M triangles ) that works under Windows and Linux for algorith testing/understanding.  
