@@ -12,7 +12,9 @@ Features:
 ---------
 
 Runs unchanged under Windows and Linux and potentially Mac provided the appropriate libraries ara installed.
+
 Full arcball capability.
+
 Very compact code, easy to read and understand.
 
 
@@ -20,26 +22,43 @@ Limitations:
 ------------
 
 It can only show one part at a time.
-This Ruby implementation may be slow, for large files ( > 0.5M triangles ) depending on the hardware.
+
+This Ruby implementation may be slow, for large files ( > 0.1M triangles ) depending on the hardware, but it is just fine for a quick visualization.
+
 No zoom / No pan
+
+Only ASCII files.
 
 
 Future work:
 ------------
 
 Add zoom/pan.
+
 Support multiple geometries.
+
 Selection of parts.
+
+To read binary files.
+
 Rewrite in modern OpenGL and other that GLUT.
+
 Also hoping that the guys from the shoes.rb project implement a OpenGL context in their GUI tools.
+
+To add error checking.
+
+Move to modern OpenGL after experimenting with this codebase.
 
 
 Requirements:
 -------------
 
-opengl ruby library.
+OpenGL ruby library.
+
 glu and glut libraries.
+
 A Ruby installation.
+
 The program was tested using Ruby 1.9.3 on Windows 7 and Debian 7
 
 
