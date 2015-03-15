@@ -1,4 +1,4 @@
-TrekantER-B
+TrekanteR B
 ===========
 
 trekantER is a Stereo Lithography file reader written in Ruby.
