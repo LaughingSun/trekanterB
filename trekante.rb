@@ -55,7 +55,7 @@ def license
 end
 
 def printModelInfo( model_data )
-        puts "Model name         : #{model_data['model-name']}"
+        puts "Model name         : #{model_data['model_name']}"
         puts "Triangle count     : #{model_data['triangle_count']}"
         puts "Minimum coordinate : #{model_data['min_c']}"
         puts "Maximum coordinate : #{model_data['max_c']}"
@@ -156,10 +156,10 @@ def getcenter( u, v )
 end
 
 def get3Ddata( stl_file )
+
         model_data = { }
         triangle_count = 0
         normals = []
-        temp_normal = []
         temp_vertex = []
         temp_triangle = []
         triangles = []
@@ -177,7 +177,14 @@ def get3Ddata( stl_file )
         max_c[ 2 ] = nil
 
         max_dim = 0
-        
+
+        model_data[ 'normal_array' ] = []
+        model_data[ 'vertex_array' ] = []
+        model_data[ 'color_array' ] = []
+        model_data[ 'index_array' ] = []
+
+        puts "\nOpening file: #{stl_file}."        
+        puts "Preparing normal and vertex array."
         File.open( stl_file ).each do | this_line |
                 if this_line.include? "endfacet"
                         triangle_count += 1
@@ -186,40 +193,59 @@ def get3Ddata( stl_file )
                         name = split_line[ 1 ]
                 elsif ( this_line.include? "facet" ) && ( this_line.include? "normal" )
                         split_line = this_line.split( " " )
-                        temp_normal.push( split_line[ 2 ].to_f )
-                        temp_normal.push( split_line[ 3 ].to_f )
-                        temp_normal.push( split_line[ 4 ].to_f )
-                        normals << temp_normal
-                        temp_normal = []
+                        model_data[ 'normal_array' ].push( split_line[ 2 ].to_f )
+                        model_data[ 'normal_array' ].push( split_line[ 3 ].to_f )
+                        model_data[ 'normal_array' ].push( split_line[ 4 ].to_f )
+                        model_data[ 'normal_array' ].push( split_line[ 2 ].to_f )
+                        model_data[ 'normal_array' ].push( split_line[ 3 ].to_f )
+                        model_data[ 'normal_array' ].push( split_line[ 4 ].to_f )
+                        model_data[ 'normal_array' ].push( split_line[ 2 ].to_f )
+                        model_data[ 'normal_array' ].push( split_line[ 3 ].to_f )
+                        model_data[ 'normal_array' ].push( split_line[ 4 ].to_f )
                 elsif this_line.include? "vertex"
                         vertex_count += 1
                         split_line = this_line.split( " " )
                         temp_vertex.push( split_line[ 1 ].to_f )
                         temp_vertex.push( split_line[ 2 ].to_f )
                         temp_vertex.push( split_line[ 3 ].to_f )
-                        temp_triangle << temp_vertex
+
+                        model_data[ 'vertex_array' ].push( temp_vertex[ 0 ] )
+                        model_data[ 'vertex_array' ].push( temp_vertex[ 1 ] )
+                        model_data[ 'vertex_array' ].push( temp_vertex[ 2 ] )
 
                         min_c = getmin( min_c, temp_vertex )
                         max_c = getmax( max_c, temp_vertex )
-                        
-                        if ( vertex_count % 3 == 0 )
-                                triangles << temp_triangle
-                                temp_triangle = []
-                        end
                         
                         temp_vertex = []
                 end
         end
 
-        model_data['model_name'] = name
-        model_data['triangle_count'] = triangle_count
-        model_data['normals'] = normals
-        model_data['triangles'] = triangles
-        model_data['min_c'] = min_c
-        model_data['max_c'] = max_c
-        model_data['max_dimension'] = getmaxdim( min_c, max_c )
-        model_data['model_center' ] = getcenter( min_c, max_c )
+        puts "Preparing color array."
+        color = [ 255, 0, 0, 255 ]
+        for i in ( 0...( triangle_count * 3 ) )
+                model_data['color_array'].push( color[ 0 ] )
+                model_data['color_array'].push( color[ 1 ] )
+                model_data['color_array'].push( color[ 2 ] )
+                model_data['color_array'].push( color[ 3 ] )
+        end
+        
+        puts "Preparing index array."
+        j = 0
+        for i in ( 0...( triangle_count * 3 ) )
+                model_data['index_array'][i] = j
+                j += 1
+        end
 
+        puts "Getting additional model information."
+        model_data[ 'model_name' ] = name
+        model_data[ 'triangle_count' ] = triangle_count
+        model_data[ 'vertex_count' ] = triangle_count * 3
+        model_data[ 'min_c' ] = min_c
+        model_data[ 'max_c' ] = max_c
+        model_data[ 'max_dimension' ] = getmaxdim( min_c, max_c )
+        model_data[ 'model_center' ] = getcenter( min_c, max_c )
+        puts " "
+        
         return model_data
 end
 
@@ -244,11 +270,14 @@ def glinit( )
 	glEnable( GL_LIGHT0 )
 	glEnable( GL_LIGHTING )
 	glEnable( GL_DEPTH_TEST )
-	#glEnable( GL_RESCALE_NORMAL )
-        glEnable( GL_NORMALIZE )
+	glEnable( GL_NORMALIZE )
 	glEnable( GL_BLEND )
         glEnable( GL_DITHER )
         glEnable( GL_COLOR_MATERIAL )
+        glEnable( GL_VERTEX_ARRAY )
+        glEnable( GL_COLOR_ARRAY )
+        glEnable( GL_NORMAL_ARRAY )
+        glEnable( GL_INDEX_ARRAY )
         glDepthFunc( GL_LEQUAL )
         glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST )
 	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE )
@@ -348,16 +377,12 @@ def drawModel
                       -1 * $model_data[ 'model_center' ][ 1 ],
                       -1 * $model_data['model_center'][ 2 ] )
         glColor3f( 1.0, 0.0, 0.0 )
-        
-        for i in ( 0...$model_data['triangle_count'] )
-                glBegin( GL_TRIANGLES )
-                glNormal3f( *( $model_data['normals'][ i ] ) )
-                glVertex3f( *( $model_data['triangles'][ i ][ 0 ] ) )
-		glVertex3f( *( $model_data['triangles'][ i ][ 1 ] ) )
-                glVertex3f( *( $model_data['triangles'][ i ][ 2 ] ) )
-                glEnd( )
-        end
 
+        glNormalPointer( GL_FLOAT, 0, $model_data['normal_array'] )
+        glColorPointer( 4, GL_UNSIGNED_BYTE, 0, $model_data[ 'color_array' ] )
+        glVertexPointer( 3, GL_FLOAT, 0, $model_data[ 'vertex_array' ] )
+        glDrawElements( GL_TRIANGLES, $model_data[ 'vertex_count' ], GL_UNSIGNED_INT, $model_data[ 'index_array' ] ) 
+        
         drawOrigin
         drawAxis
         
@@ -479,7 +504,7 @@ glutInit
 glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH )
 glutInitWindowSize( 500, 500 )
 glutInitWindowPosition( 100, 100 )
-glutCreateWindow( "TrekanteR B" )
+glutCreateWindow( "TrekanterB" )
 glutDisplayFunc( display )
 glutReshapeFunc( reshape )
 glutKeyboardFunc( keyboard )
@@ -490,6 +515,7 @@ glutMainLoop( )
 
 
 __END__
+
 
 <<LICENSE
 GNU GENERAL PUBLIC LICENSE
