@@ -108,6 +108,7 @@ Controls:
 
 
 Mouse left button - model rotation
+
 Mouse right button - pan
 
 	
