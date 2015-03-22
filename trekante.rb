@@ -372,6 +372,7 @@ def drawModel
                    0, 1, 0 )
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL )
         glPushMatrix
+        glTranslatef( $x_pan, $y_pan, 0 )
         glMultMatrixf( $transformation )
         glTranslatef( -1 * $model_data[ 'model_center' ][ 0 ],
                       -1 * $model_data[ 'model_center' ][ 1 ],
@@ -409,8 +410,23 @@ $last_rotation = [ 1.0, 0.0, 0.0, 0.0,
 $z_min = 0.9
 $z_max = 12000
 
+#mouse buttons
 $left_button_down = 0
+$right_button_down = 0
+$middle_button_down = 0
+
+$pan_factor = 250
+$x_pan = 0
+$y_pan = 0
+$cam_pos_factor_when_small = 30.0
+$cam_pos_factor_when_big = 10.0
+$translate_sensitivity = 1.0
+
+
 $set_initial_coordinate = 1
+$initial_coordinate = { 'x' => 0, 'y' => 0 }
+$world_initial_coordinate = { 'x' => 0, 'y' => 0 }
+
 $screen_center_x
 $screen_center_y
 $sphere_radius
@@ -423,7 +439,8 @@ $camera_x = 0.0
 $camera_y = 0.0
 $camera_z = 1.5
 $fov = 10.0
-			
+
+
 display = Proc.new do
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity
@@ -434,6 +451,7 @@ display = Proc.new do
         glFlush
 end
 
+
 keyboard = Proc.new do |key, x, y|
 	case (key)
 		when ?\e
@@ -441,35 +459,99 @@ keyboard = Proc.new do |key, x, y|
 	end
 end
 
+
 mouse = Proc.new do | button, state, x, y |
-	if button == GLUT_LEFT_BUTTON
+        if button == 3 || button == 4
+                if state == GLUT_UP
+                        #return
+                end
+
+                if button == 3
+                        # handle zoom out here
+                        #return
+                end
+
+                if button == 4
+                        # handle zoom in here
+                        #return
+                end
+        end
+
+        if button == GLUT_RIGHT_BUTTON
+                $right_button_down = 1
+        end
+
+        if button == GLUT_MIDDLE_BUTTON
+                $middle_button_down = 1
+        end
+
+        
+        if button == GLUT_LEFT_BUTTON
 		$left_button_down = 1
 	end
 		
 	if state == GLUT_UP
-		$left_button_down = 0
+                $left_button_down = 0
+                $middle_button_down = 0
+                $right_button_down = 0
 		$set_initial_coordinate = 1
 	end
 end
 
-reshape = Proc.new do | w, h |
-        if ( h == 0 )
-                h = 1
-        end
-        aspect = w / h
-        $camera_z = 1.5 * $model_data['max_dimension']
-        fov_rad = Math.atan( ( 1.1 * $model_data[ 'max_dimension' ] / 1.5 ) / ( $model_data[ 'max_dimension' ] * 5.0 ) )
-        $fov = 360.0 * fov_rad / Math::PI
-        glViewport( 0, 0, w, h )
-        glMatrixMode( GL_PROJECTION )
-        glLoadIdentity
-        gluPerspective( $fov, aspect, $z_min, $z_max )
-        glMatrixMode( GL_MODELVIEW )
-end
-
-# arcball controller inside mouse function callback
 
 mouse_motion = Proc.new do | x, y |
+        viewport = []
+        mvmatrix = []
+        projmatrix = []
+        wx = 0
+        wy = 0
+        wz = 0
+        delta_x = 0
+        delta_y = 0
+        real_y = 0
+
+        if $right_button_down == 1
+                viewport = glGetIntegerv( GL_VIEWPORT )
+                mvmatrix = glGetDoublev( GL_MODELVIEW_MATRIX )
+                projmatrix = glGetDoublev( GL_PROJECTION_MATRIX )
+                real_y = viewport[ 3 ] - y - 1
+                wx, wy, wz = gluUnProject( x, real_y, 0.0, mvmatrix, projmatrix, viewport )
+                
+                if $set_initial_coordinate == 1
+                        $initial_coordinate[ 'x' ] = x
+                        $initial_coordinate[ 'y' ] = y
+                        $world_initial_coordinate[ 'x' ] = wx
+                        $world_initial_coordinate[ 'y' ] = wy
+                        $set_initial_coordinate = 0
+                else
+                        delta_x = wx - $world_initial_coordinate[ 'x' ]
+                        delta_y = wy - $world_initial_coordinate[ 'y' ]
+                        if $model_data[ 'max_dimension' ] > 10.0 && $model_data[ 'max_dimension' ] < 501.0
+                                $x_pan = ( $x_pan + delta_x * $model_data[ 'max_dimension' ] / $zoom ) * $translate_sensitivity
+                                $y_pan = ( $y_pan + delta_y * $model_data[ 'max_dimension' ] / $zoom ) * $translate_sensitivity
+                        elsif $model_data[ 'max_dimension' ] > 500.0 && $model_data[ 'max_dimension' ] < 1000.0
+                                $x_pan = ( $x_pan + delta_x * $model_data[ 'max_dimension' ] * 0.1 / $zoom ) * $translate_sensitivity
+                                $y_pan = ( $y_pan + delta_y * $model_data[ 'max_dimension' ] * 0.1 / $zoom ) * $translate_sensitivity
+                        elsif $model_data[ 'max_dimesnion' ] > 999
+                                $x_pan = ( $x_pan + delta_x * $model_data[ 'max_dimension' ] * 0.0222 / $zoom ) * $translate_sensitivity
+                                $y_pan = ( $y_pan + delta_y * $model_data[ 'max_dimension' ] * 0.0222 / $zoom ) * $translate_sensitivity
+                        else
+                                $x_pan = ( $x_pan + delta_x * $model_data[ 'max_dimension' ] * $cam_pos_factor_when_small / $zoom ) * $translate_sensitivity
+                                $y_pan = ( $y_pan + delta_y * $model_data[ 'max_dimension' ] * $cam_pos_factor_when_small / $zoom ) * $translate_sensitivity
+                        end
+                end
+                
+                
+                $world_initial_coordinate[ 'x' ] = wx
+                $world_initial_coordinate[ 'y' ] = wy
+
+                $initial_coordinate[ 'x' ] = x
+                $initial_coordinate[ 'y' ] = y
+
+                glutPostRedisplay
+        end
+        
+        
 	if $left_button_down == 1
 		window_width = glutGet( GLUT_WINDOW_WIDTH )
 		window_height = glutGet( GLUT_WINDOW_HEIGHT )
@@ -491,9 +573,32 @@ mouse_motion = Proc.new do | x, y |
 			$qdrag = [ quat_real_part, quat_vector_part[ 0 ], -quat_vector_part[ 1 ], quat_vector_part[ 2 ] ]
 			$this_rotation = Roto.quaternionToMatrix( $qdrag )
 			$transformation = Roto.matrix4x4_Multiplication( $last_rotation, $this_rotation )
-			glutPostRedisplay( )
+			glutPostRedisplay
 		end
 	end
+end
+
+
+reshape = Proc.new do | w, h |
+        if ( h == 0 )
+                h = 1
+        end
+        aspect = w / h
+
+        if ( $model_data[ 'max_dimension' ] <= 10.0 )
+                $camera_z = $cam_pos_factor_when_small * $model_data['max_dimension']
+                fov_rad = Math.atan( ( 1.1 * $model_data[ 'max_dimension' ] / 1.5 ) / ( $model_data[ 'max_dimension' ] * $cam_pos_factor_when_small ) )
+        elsif
+                $camera_z = $cam_pos_factor_when_big * $model_data['max_dimension']
+                fov_rad = Math.atan( ( 1.1 * $model_data[ 'max_dimension' ] / 1.5 ) / ( $model_data[ 'max_dimension' ] * $cam_pos_factor_when_big ) )
+        end
+        
+        $fov = 360.0 * fov_rad / Math::PI
+        glViewport( 0, 0, w, h )
+        glMatrixMode( GL_PROJECTION )
+        glLoadIdentity
+        gluPerspective( $fov, aspect, $z_min, $z_max )
+        glMatrixMode( GL_MODELVIEW )
 end
 
 

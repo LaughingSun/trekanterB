@@ -1,11 +1,11 @@
 TrekanteR B
 ===========
 
-trekantER is a Stereo Lithography file reader written in Ruby.
+trekantER is a Stereo Lithography file viewer written in Ruby.
 Trekanter Currently is implemented in the old openGL pipeline style ( immediate mode ) and glut.
 Plans exist to migrate to modern OpenGL.
 
-The intention is to have a simple visualization tool for small STL files ( < 0.5M triangles ) that works under Windows and Linux for algorith testing/understanding.  
+The intention is to have a simple visualization tool for small STL files ( < 0.5M triangles ) that works under Windows and Linux for code/algorith testing.  
 
 
 Features:
@@ -14,6 +14,10 @@ Features:
 Runs unchanged under Windows and Linux and potentially Mac provided the appropriate libraries ara installed.
 
 Full arcball capability.
+
+Full x,y pan capability.
+
+Zoom to be implemented soon.
 
 Very compact code, easy to read and understand.
 
@@ -25,9 +29,9 @@ It can only show one part at a time.
 
 This Ruby implementation may be slow, for large files ( > 0.1M triangles ) depending on the hardware, but it is just fine for a quick visualization.
 
-No zoom / No pan
+No zoom ( yet ).
 
-Only ASCII files.
+Only ASCII files, binary files to be inplemented soon.
 
 
 Future work:
@@ -41,13 +45,11 @@ Selection of parts.
 
 To read binary files.
 
-Rewrite in modern OpenGL and other that GLUT.
+Rewrite in modern OpenGL and other that GLUT after experimenting with this code.
 
 Also hoping that the guys from the shoes.rb project implement a OpenGL context in their GUI tools.
 
 To add error checking.
-
-Move to modern OpenGL after experimenting with this codebase.
 
 
 Requirements:
@@ -100,7 +102,14 @@ Installation:
 	
 	$ ruby .\trekante.rb my_stl_file.stl
 
-	
+
+Controls:
+---------
+
+
+Mouse left button - model rotation
+Mouse right button - pan
+
 	
 Autor:
 ------
