@@ -46,6 +46,7 @@ require '../rotorb/roto.rb'
 
 include Gl, Glu, Glut
 
+
 def license
         puts "TrekanteR B Copyright (c) 2015 Jaime Ortiz."
         puts "TrekanteR B comes with ABSOLUTELY NOT WARRANTY."
@@ -53,6 +54,7 @@ def license
         puts "under certain conditions.( see end of code. )"
         
 end
+
 
 def printModelInfo( model_data )
         puts "Model name         : #{model_data['model_name']}"
@@ -63,12 +65,31 @@ def printModelInfo( model_data )
         puts "Model center       : #{model_data['model_center']}"
 end
 
+
+def zoomin
+        $zoom = $zoom * $zoom_sensitivity
+        if $zoom > 24
+                $zoom = 24
+        end
+end
+
+
+def zoomout
+        $zoom = $zoom / $zoom_sensitivity
+        if $zoom < 0.2
+                $zoom = 0.2
+        end
+end
+
+
 def getmin( v0, v1 )
         min_is = []
         if v0[ 0 ] == nil
                 v0[ 0 ] = v1[ 0 ]
         end
 
+        #
+        
         if v0[ 1 ] == nil
                 v0[ 1 ] = v1[ 1 ]
         end
@@ -85,19 +106,25 @@ def getmin( v0, v1 )
                 min_is[ 0 ] = v1[ 0 ]
         end
 
+        #
+        
         if v0[ 1 ] < v1[ 1 ]
                 min_is[ 1 ] = v0[ 1 ]
         else
                 min_is[ 1 ] = v1[ 1 ]
         end
 
+        #
+        
         if v0[ 2 ] < v1[ 2 ]
                 min_is[ 2 ] = v0[ 2 ]
         else
                 min_is[ 2 ] = v1[ 2 ]
         end
+
         return min_is
 end
+
 
 def getmax( v0, v1 )
         max_is = []
@@ -136,6 +163,7 @@ def getmax( v0, v1 )
         return max_is
 end
 
+
 def getmaxdim( u, v )
         dx = ( u[ 0 ] - v[ 0 ] ).abs
         dy = ( u[ 1 ] - v[ 1 ] ).abs
@@ -154,6 +182,7 @@ def getcenter( u, v )
 
         return [ xc, yc, zc ]
 end
+
 
 def get3Ddata( stl_file )
 
@@ -372,6 +401,7 @@ def drawModel
                    0, 1, 0 )
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL )
         glPushMatrix
+        glScalef( $zoom, $zoom, $zoom )
         glTranslatef( $x_pan, $y_pan, 0 )
         glMultMatrixf( $transformation )
         glTranslatef( -1 * $model_data[ 'model_center' ][ 0 ],
@@ -421,7 +451,7 @@ $y_pan = 0
 $cam_pos_factor_when_small = 30.0
 $cam_pos_factor_when_big = 10.0
 $translate_sensitivity = 1.0
-
+$zoom_sensitivity = 1.04
 
 $set_initial_coordinate = 1
 $initial_coordinate = { 'x' => 0, 'y' => 0 }
@@ -467,13 +497,13 @@ mouse = Proc.new do | button, state, x, y |
                 end
 
                 if button == 3
-                        # handle zoom out here
-                        #return
+                        zoomout
+                        glutPostRedisplay
                 end
 
                 if button == 4
-                        # handle zoom in here
-                        #return
+                        zoomin
+                        glutPostRedisplay
                 end
         end
 
@@ -544,7 +574,7 @@ mouse_motion = Proc.new do | x, y |
                 
                 $world_initial_coordinate[ 'x' ] = wx
                 $world_initial_coordinate[ 'y' ] = wy
-
+                
                 $initial_coordinate[ 'x' ] = x
                 $initial_coordinate[ 'y' ] = y
 
@@ -576,6 +606,26 @@ mouse_motion = Proc.new do | x, y |
 			glutPostRedisplay
 		end
 	end
+
+        if $middle_button_down == 1
+                if $set_initial_coordinate == 1
+                        $initial_coordinate[ 'x' ] = x
+                        $initial_coordinate[ 'y' ] = y
+                        $set_initial_coordinate = 0
+                end
+
+                if y < $initial_coordinate[ 'y']
+                        zoomout
+                        glutPostRedisplay
+                end
+
+                if y > $initial_coordinate[ 'y' ]
+                        zoomin
+                        glutPostRedisplay
+                end
+                $initial_coordinate[ 'x' ] = x
+                $initial_coordinate[ 'y' ] = y
+        end
 end
 
 
@@ -584,7 +634,7 @@ reshape = Proc.new do | w, h |
                 h = 1
         end
         aspect = w / h
-
+        
         if ( $model_data[ 'max_dimension' ] <= 10.0 )
                 $camera_z = $cam_pos_factor_when_small * $model_data['max_dimension']
                 fov_rad = Math.atan( ( 1.1 * $model_data[ 'max_dimension' ] / 1.5 ) / ( $model_data[ 'max_dimension' ] * $cam_pos_factor_when_small ) )

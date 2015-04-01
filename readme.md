@@ -17,7 +17,7 @@ Full arcball capability.
 
 Full x,y pan capability.
 
-Zoom to be implemented soon.
+Zoom capability
 
 Very compact code, easy to read and understand.
 
@@ -29,7 +29,6 @@ It can only show one part at a time.
 
 This Ruby implementation may be slow, for large files ( > 0.1M triangles ) depending on the hardware, but it is just fine for a quick visualization.
 
-No zoom ( yet ).
 
 Only ASCII files, binary files to be inplemented soon.
 
@@ -37,13 +36,12 @@ Only ASCII files, binary files to be inplemented soon.
 Future work:
 ------------
 
-Add zoom/pan.
 
 Support multiple geometries.
 
 Selection of parts.
 
-To read binary files.
+To read STL binary files.
 
 Rewrite in modern OpenGL and other that GLUT after experimenting with this code.
 
@@ -107,9 +105,13 @@ Controls:
 ---------
 
 
-Mouse left button - model rotation
+Mouse left button + mouse drag - model rotation
 
-Mouse right button - pan
+Mouse right button + mouse grag - x, y tranlation
+
+Mouse middle button + mouse up/down drag - zoom
+
+Mouse scroll wheel - zoom
 
 	
 Autor:
@@ -123,3 +125,6 @@ License:
 
 The ruby arcball controller implementation is Copyright(C) 2015 Jaime Ortiz.
 See license.md file for licensing information.	
+
+Document last updated March 31, 2015
+
